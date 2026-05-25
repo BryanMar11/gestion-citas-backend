@@ -15,10 +15,12 @@ class Usuario(Base):
 class Prestador(Base):
     __tablename__ = "prestadores"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(100), nullable=False)
     especialidad = Column(String(100), nullable=True)
-
+    email = Column(String(100), unique=True, nullable=False)
+    
+    # 👇 AGREGA ESTA LÍNEA PARA QUE ENCUENTRE LA PROPIEDAD
     citas = relationship("Cita", back_populates="prestador")
 
 class Servicio(Base):
@@ -34,13 +36,15 @@ class Servicio(Base):
 class Cita(Base):
     __tablename__ = "citas"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    usuario_id = Column(Integer, ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False)
-    prestador_id = Column(Integer, ForeignKey("prestadores.id", ondelete="CASCADE"), nullable=False)
-    servicio_id = Column(Integer, ForeignKey("servicios.id", ondelete="RESTRICT"), nullable=False)
+    id = Column(Integer, primary_key=True, index=True)
     fecha_hora = Column(DateTime, nullable=False)
-    estado = Column(String(20), default="pendiente")
+    
+    # 1. Las llaves foráneas (Fíjate que tengan el ForeignKey apuntando a la tabla correcta)
+    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
+    prestador_id = Column(Integer, ForeignKey("prestadores.id"), nullable=False) # <-- ASEGÚRATE DE QUE ESTA LÍNEA ESTÉ ASÍ
+    servicio_id = Column(Integer, ForeignKey("servicios.id"), nullable=False)
 
+    # 2. Las relaciones (Para que se entiendan bidireccionalmente con la otra tabla)
     usuario = relationship("Usuario", back_populates="citas")
-    prestador = relationship("Prestador", back_populates="citas")
+    prestador = relationship("Prestador", back_populates="citas") # <-- Y QUE ESTA COINCIDA CON LA DE PRESTADORES
     servicio = relationship("Servicio", back_populates="citas")

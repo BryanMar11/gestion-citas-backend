@@ -106,6 +106,7 @@ class ServicioResponse(BaseModel):
 
 @app.post("/prestadores/", response_model=PrestadorResponse)
 def crear_prestador(prestador: PrestadorCreate, db: Session = Depends(get_db)):
+    # Buscar si ya existe por email
     db_prestador = db.query(models.Prestador).filter(models.Prestador.email == prestador.email).first()
     if db_prestador:
         raise HTTPException(status_code=400, detail="El email del prestador ya está registrado")
@@ -113,7 +114,7 @@ def crear_prestador(prestador: PrestadorCreate, db: Session = Depends(get_db)):
     nuevo_prestador = models.Prestador(
         nombre=prestador.nombre,
         especialidad=prestador.especialidad,
-        email=prestador.email
+        email=prestador.email # Mapeo limpio
     )
     db.add(nuevo_prestador)
     db.commit()
@@ -129,19 +130,31 @@ def obtener_prestadores(db: Session = Depends(get_db)):
 
 @app.post("/servicios/", response_model=ServicioResponse)
 def crear_servicio(servicio: ServicioCreate, db: Session = Depends(get_db)):
+    datos_servicio = servicio.model_dump()
+    
     nuevo_servicio = models.Servicio(
-        nombre=servicio.nombre,
-        descripcion=servicio.descripcion,
-        precio=servicio.precio
+        nombre_servicio=datos_servicio.get("nombre") or datos_servicio.get("nombre_servicio"),
+        precio=datos_servicio.get("precio"),
+        duracion_minutos=next(
+            (v for k, v in datos_servicio.items() if "duracion" in k or "minutos" in k), 
+            30
+        )
     )
+    
     db.add(nuevo_servicio)
     db.commit()
     db.refresh(nuevo_servicio)
+    
+    # El truco mágico para engañar a FastAPI:
+    nuevo_servicio.nombre = nuevo_servicio.nombre_servicio
+    
     return nuevo_servicio
 
-@app.get("/servicios/", response_model=list[ServicioResponse])
-def obtener_servicios(db: Session = Depends(get_db)):
-    return db.query(models.Servicio).all()
+# 👇 LE QUITAMOS EL response_model=list[ServicioResponse] PARA QUE DEJE PASAR LOS DATOS DE LA BD
+@app.get("/servicios/") 
+def obtener_servicios(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    servicios = db.query(models.Servicio).offset(skip).limit(limit).all()
+    return servicios
 
 # --- ENDPOINTS PARA CITAS (AGENDAMIENTO) ---
 
