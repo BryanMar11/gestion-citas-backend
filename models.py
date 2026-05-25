@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Decimal, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Numeric, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -26,7 +26,7 @@ class Servicio(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     nombre_servicio = Column(String(100), nullable=False)
-    precio = Column(Decimal(precision=10, scale=2), nullable=False)
+    precio = Column(Numeric(precision=10, scale=2), nullable=False)
     duracion_minutos = Column(Integer, nullable=False)
 
     citas = relationship("Cita", back_populates="servicio")
