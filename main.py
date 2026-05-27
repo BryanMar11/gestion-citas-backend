@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
 from database import engine, Base, get_db
@@ -158,36 +158,93 @@ def obtener_servicios(skip: int = 0, limit: int = 100, db: Session = Depends(get
 
 # --- ENDPOINTS PARA CITAS (AGENDAMIENTO) ---
 
-@app.post("/citas/", response_model=CitaResponse)
+@app.post("/citas/")
 def crear_cita(cita: CitaCreate, db: Session = Depends(get_db)):
-    # 1. Validar que el usuario exista en la BD
-    usuario = db.query(models.Usuario).filter(models.Usuario.id == cita.usuario_id).first()
-    if not usuario:
-        raise HTTPException(status_code=404, detail="El usuario especificado no existe")
+    
+    # === NUEVA VALIDACIÓN DE EXISTENCIA ===
+    # 1. Verificar si el usuario existe
+    if not db.query(models.Usuario).filter(models.Usuario.id == cita.usuario_id).first():
+        raise HTTPException(status_code=404, detail="El usuario especificado no existe.")
         
-    # 2. Validar que el prestador exista
-    prestador = db.query(models.Prestador).filter(models.Prestador.id == cita.prestador_id).first()
-    if not prestador:
-        raise HTTPException(status_code=404, detail="El prestador especificado no existe")
+    # 2. Verificar si el prestador existe
+    if not db.query(models.Prestador).filter(models.Prestador.id == cita.prestador_id).first():
+        raise HTTPException(status_code=404, detail="El prestador (barbero) especificado no existe.")
         
-    # 3. Validar que el servicio exista
-    servicio = db.query(models.Servicio).filter(models.Servicio.id == cita.servicio_id).first()
-    if not servicio:
-        raise HTTPException(status_code=404, detail="El servicio especificado no existe")
-
-    # 4. Si todo está melo, se crea la cita
+    # 3. Verificar si el servicio existe
+    if not db.query(models.Servicio).filter(models.Servicio.id == cita.servicio_id).first():
+        raise HTTPException(status_code=404, detail="El servicio especificado no existe.")
+    
+    # === TU LÓGICA DE CONTROL DE CHOQUES QUE YA FUNCIONA ===
+    fecha_busqueda = cita.fecha_hora
+    if isinstance(fecha_busqueda, str):
+        fecha_busqueda = fecha_busqueda.replace("T", " ")
+    
+    cita_existente = db.query(models.Cita).filter(
+        models.Cita.prestador_id == cita.prestador_id,
+        models.Cita.fecha_hora == fecha_busqueda
+    ).first()
+    
+    if cita_existente:
+        raise HTTPException(
+            status_code=400,
+            detail="El prestador ya tiene una cita agendada para esta fecha y hora."
+        )
+    
+    # === GUARDADO EN BASE DE DATOS ===
     nueva_cita = models.Cita(
         usuario_id=cita.usuario_id,
         prestador_id=cita.prestador_id,
         servicio_id=cita.servicio_id,
-        fecha_hora=cita.fecha_hora
+        fecha_hora=fecha_busqueda
     )
+    
     db.add(nueva_cita)
     db.commit()
     db.refresh(nueva_cita)
     return nueva_cita
 
-# Ruta para ver todas las citas agendadas
-@app.get("/citas/", response_model=list[CitaResponse])
-def obtener_citas(db: Session = Depends(get_db)):
-    return db.query(models.Cita).all()
+@app.delete("/citas/{cita_id}")
+def cancelar_cita(cita_id: int, db: Session = Depends(get_db)):
+    # Buscar la cita por su ID
+    cita = db.query(models.Cita).filter(models.Cita.id == cita_id).first()
+    
+    # Si no existe, tiramos error 404
+    if not cita:
+        raise HTTPException(status_code=404, detail="La cita no existe.")
+    
+    # Si existe, la borramos de la base de datos
+    db.delete(cita)
+    db.commit()
+    
+    return {"message": f"Cita con ID {cita_id} cancelada exitosamente."}
+
+@app.put("/citas/{cita_id}")
+def modificar_cita(cita_id: int, nueva_fecha_hora: str, db: Session = Depends(get_db)):
+    # 1. Buscar la cita que se quiere modificar
+    cita = db.query(models.Cita).filter(models.Cita.id == cita_id).first()
+    if not cita:
+        raise HTTPException(status_code=404, detail="La cita no existe.")
+    
+    # Limpiar el string de la fecha por si viene con la 'T' de Swagger
+    fecha_limpia = nueva_fecha_hora.replace("T", " ")
+    
+    # 2. VALIDACIÓN: Revisar que el barbero no esté ocupado en ese nuevo horario
+    # (Ignoramos la cita actual para que no choque consigo misma si mandan la misma hora)
+    horario_ocupado = db.query(models.Cita).filter(
+        models.Cita.prestador_id == cita.prestador_id,
+        models.Cita.fecha_hora == fecha_limpia,
+        models.Cita.id != cita_id  # Que sea una cita diferente
+    ).first()
+    
+    if horario_ocupado:
+        raise HTTPException(
+            status_code=400, 
+            detail="El prestador ya tiene otra cita agendada en ese horario."
+        )
+    
+    # 3. Si todo está bien, actualizamos la fecha y hora
+    cita.fecha_hora = fecha_limpia
+    db.commit()
+    db.refresh(cita)
+    
+    return {"message": "Cita reprogramada con éxito.", "cita": cita}
