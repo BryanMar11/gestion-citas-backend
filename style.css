@@ -1,0 +1,558 @@
+/* ==========================================================================
+   VARIABLES DE DISEÑO PREMIUM - BARBERSHOP
+   ========================================================================== */
+:root {
+    --bg-main: #08090c;
+    --bg-card: rgba(26, 32, 44, 0.65); /* Translúcido para efecto cristal */
+    --border-color: rgba(255, 255, 255, 0.06);
+    --text-main: #a0aec0;
+    --text-light: #ffffff;
+    --gold: #d4af37;           /* Dorado metálico */
+    --gold-hover: #f3e5ab;     /* Dorado vainilla suave */
+    --gold-glow: rgba(212, 175, 55, 0.25);
+    --green-btn: #14532d;
+    --green-hover: #166534;
+    --red-btn: #7f1d1d;
+    --red-hover: #991b1b;
+}
+
+/* ==========================================================================
+   RESETEO Y FONDO CON TU IMAGEN PERSONALIZADA
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-main);
+    /* 🌟 Tu imagen con filtro oscuro del 88% para mantener la legibilidad */
+    background-image: linear-gradient(rgba(8, 9, 12, 0.88), rgba(8, 9, 12, 0.88)), url('https://wallpapers.com/images/hd/barber-pole-drawing-igrs8dg3uws3rwng.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--text-main);
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   HEADER CON EFECTO DE CRISTAL ESMERILADO
+   ========================================================================== */
+.main-header {
+    background: rgba(4, 5, 7, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.header-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-area h1 {
+    font-family: 'Cinzel', serif;
+    color: var(--text-light);
+    font-size: 2.2rem;
+    letter-spacing: 3px;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.logo-area h1 span {
+    color: var(--gold);
+    display: inline-block;
+}
+
+.logo-area p {
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    color: #718096;
+    margin-top: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #e2e8f0;
+    font-weight: 500;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #10b981;
+    animation: pulse 2s infinite;
+}
+
+/* ==========================================================================
+   LAYOUT GRID RESPONSIVO (CORREGIDO PARA EVITAR DESBORDE)
+   ========================================================================== */
+.dashboard-layout {
+    max-width: 1300px;
+    margin: 40px auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 35px;
+}
+
+@media (min-width: 1024px) {
+    .dashboard-layout {
+        /* minmax(0, 2fr) evita estrictamente que la columna derecha rompa el ancho de la pantalla */
+        grid-template-columns: 1fr minmax(0, 2fr); 
+    }
+}
+
+.forms-column {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* ==========================================================================
+   TARJETAS GLASSMORPHISM
+   ========================================================================== */
+.card {
+    background: var(--bg-card);
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(212, 175, 55, 0.3);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+}
+
+.card-title {
+    font-family: 'Cinzel', serif;
+    color: var(--text-light);
+    font-size: 1.35rem;
+    margin-bottom: 25px;
+    position: relative;
+    padding-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+.card-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.card:hover .card-title::after {
+    width: 60px;
+}
+
+/* ==========================================================================
+   FORMULARIOS
+   ========================================================================== */
+.barber-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #a0aec0;
+    font-weight: 600;
+}
+
+.form-group input, 
+.form-group select {
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus, 
+.form-group select:focus {
+    border-color: var(--gold);
+    background-color: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 0 3px var(--gold-glow);
+}
+
+/* ==========================================================================
+   BOTONES
+   ========================================================================== */
+.btn {
+    border: none;
+    border-radius: 10px;
+    padding: 14px 24px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--gold) 0%, #b89047 100%);
+    color: #000;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--gold-hover) 0%, var(--gold) 100%);
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(22, 101, 52, 0.2);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.4);
+}
+
+.btn-secondary:hover {
+    background: var(--green-hover);
+    color: white;
+    transform: scale(1.02);
+}
+
+.btn-action-edit {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--gold);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.btn-action-edit:hover {
+    background: var(--gold);
+    color: #000;
+}
+
+.btn-action-delete {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.btn-action-delete:hover {
+    background: #dc2626;
+    color: #fff;
+}
+
+/* ==========================================================================
+   TABLA RESPONSIVA CONTROLADA (MÁXIMA OPTIMIZACIÓN DE ESPACIO)
+   ========================================================================== */
+.table-responsive {
+    width: 100%;             /* Obliga al contenedor a quedarse dentro de la tarjeta */
+    overflow-x: auto;        /* Crea scroll horizontal INTERNO si la pantalla es muy chica */
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    -webkit-overflow-scrolling: touch;
+}
+
+.barber-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.barber-table th {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    padding: 14px 12px;      /* Padding optimizado */
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.barber-table td {
+    padding: 12px 12px;      /* Padding optimizado */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    color: #cbd5e1;
+}
+
+.barber-table tr {
+    animation: fadeInUp 0.5s ease backwards;
+}
+
+.barber-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Forzar espacio mínimo para que los botones quepan holgados */
+.barber-table th:last-child,
+.barber-table td:last-child {
+    min-width: 220px;
+    text-align: center;
+}
+
+/* Asegurar que la fecha se mantenga recta sin romperse en líneas verticales */
+.barber-table td:nth-child(5) {
+    white-space: nowrap; 
+    color: #8892b0;
+    font-variant-numeric: tabular-nums; 
+}
+
+.service-badge {
+    background-color: rgba(212, 175, 55, 0.1);
+    color: var(--gold);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    display: inline-block;
+}
+
+.table-loading {
+    text-align: center;
+    padding: 60px !important;
+    color: #4a5568;
+    font-style: italic;
+}
+
+/* ==========================================================================
+   ALERTAS INTERNAS
+   ========================================================================== */
+.alert {
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 500;
+    border: 1px solid transparent;
+}
+
+.alert-success {
+    background-color: rgba(20, 83, 45, 0.25);
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.3);
+}
+
+.alert-error {
+    background-color: rgba(127, 29, 29, 0.25);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* ==========================================================================
+   MODAL DE CONFIRMACIÓN PERSONALIZADO
+   ========================================================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(4, 5, 7, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay:not(.hidden) {
+    opacity: 1;
+}
+
+.modal-card {
+    background: rgba(31, 40, 51, 0.85);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 18px;
+    padding: 30px;
+    width: 90%;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay:not(.hidden) .modal-card {
+    transform: scale(1);
+}
+
+.modal-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.modal-title-text {
+    font-family: 'Cinzel', serif;
+    color: var(--text-light);
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.modal-message-text {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-modal {
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    border: none;
+    flex: 1;
+}
+
+.btn-modal-dismiss {
+    background: rgba(255, 255, 255, 0.08);
+    color: #a0aec0;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.btn-modal-dismiss:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--text-light);
+}
+
+.btn-modal-proceed {
+    background: linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.2);
+}
+
+.btn-modal-proceed:hover {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    transform: scale(1.03);
+}
+
+/* ==========================================================================
+   ANIMACIONES
+   ========================================================================== */
+.animate-fade-in {
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.forms-column .card:nth-child(1) { animation-delay: 0.1s; }
+.forms-column .card:nth-child(2) { animation-delay: 0.2s; }
+.table-column { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+    70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+
+/* ==========================================================================
+   PERSONALIZACIÓN DE LA BARRA DE DESPLAZAMIENTO (SCROLLBAR PREMIUM)
+   ========================================================================== */
+
+/* 1. Para navegadores basados en Webkit (Chrome, Edge, Safari, Opera) */
+.table-responsive::-webkit-scrollbar {
+    height: 8px;              /* Grosor de la barra horizontal */
+    width: 8px;               /* Grosor de la barra vertical (si se llega a usar) */
+}
+
+/* El fondo por donde corre la barra */
+.table-responsive::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+}
+
+/* El indicador (la barrita que se mueve) */
+.table-responsive::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--gold) 0%, #b89047 100%);
+    border-radius: 10px;
+    border: 2px solid rgba(31, 40, 51, 0.5); /* Crea un espacio elegante alrededor */
+}
+
+/* Cuando le pasas el mouse por encima a la barrita */
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: var(--gold-hover);
+    box-shadow: 0 0 10px var(--gold-glow);
+}
+
+/* 2. Para Firefox (Soporte básico moderno) */
+.table-responsive {
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold) rgba(0, 0, 0, 0.4);
+}

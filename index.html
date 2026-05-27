@@ -3,107 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestión de Citas - Barbería</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>BarberShop - Gestión de Citas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-100 min-h-screen font-sans">
+<body>
 
-    <header class="bg-blue-600 text-white py-6 shadow-md mb-8">
-        <div class="container mx-auto px-4">
-            <h1 class="text-3xl font-bold tracking-tight">💈 Panel de Control de Citas</h1>
-            <p class="text-blue-100 text-sm mt-1">Gestión interna y agendamiento en tiempo real</p>
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <h1><span>💈</span> BARBERSHOP</h1>
+                <p>INTERNAL MANAGEMENT & SCHEDULING</p>
+            </div>
+            <div class="status-badge">
+                <span class="pulse-dot"></span> Sistema Online
+            </div>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8 pb-12">
+    <main class="dashboard-layout">
         
-        <div class="lg:col-span-1 space-y-6">
+        <div class="forms-column">
             
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    👤 Registrar Nuevo Cliente
-                </h3>
-                <form id="form-usuario" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Nombre Completo</label>
-                        <input type="text" id="reg-nombre" required class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 text-sm" placeholder="Ej. Juan Pérez">
+            <section class="card animate-fade-in">
+                <h3 class="card-title">👤 Registrar Cliente</h3>
+                <form id="form-usuario" class="barber-form">
+                    <div class="form-group">
+                        <label>Nombre Completo</label>
+                        <input type="text" id="reg-nombre" required placeholder="Ej. Juan Pérez">
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Teléfono</label>
-                        <input type="text" id="reg-telefono" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 text-sm" placeholder="Ej. 3123456789">
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="text" id="reg-telefono" placeholder="Ej. 3123456789">
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Correo Electrónico</label>
-                        <input type="email" id="reg-email" required class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 text-sm" placeholder="Ej. juan@correo.com">
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" id="reg-email" required placeholder="Ej. juan@correo.com">
                     </div>
-                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm shadow-sm">
-                        Registrar Cliente
-                    </button>
+                    <button type="submit" class="btn btn-secondary">Guardar Registro</button>
                 </form>
             </section>
 
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    📅 Agendar Nueva Cita
-                </h2>
+            <section class="card animate-fade-in">
+                <h2 class="card-title">📅 Agendar Cita</h2>
                 
-                <div id="alerta" class="hidden p-4 rounded-lg mb-4 text-sm font-medium"></div>
+                <div id="alerta" class="hidden alert"></div>
 
-                <form id="form-cita" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Cliente</label>
-                        <select id="select-usuario" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" required>
-                            <option value="">Seleccione un cliente...</option>
+                <form id="form-cita" class="barber-form">
+                    <div class="form-group">
+                        <label>Seleccionar Cliente</label>
+                        <select id="select-usuario" required>
+                            <option value="">Cargando clientes...</option>
                         </select>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Barbero / Prestador</label>
-                        <select id="select-prestador" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" required>
-                            <option value="">Seleccione un barbero...</option>
+                    <div class="form-group">
+                        <label>Asignar Barbero</label>
+                        <select id="select-prestador" required>
+                            <option value="">Cargando barberos...</option>
                         </select>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Servicio</label>
-                        <select id="select-servicio" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" required>
-                            <option value="">Seleccione un servicio...</option>
+                    <div class="form-group">
+                        <label>Servicio Requerido</label>
+                        <select id="select-servicio" required>
+                            <option value="">Cargando servicios...</option>
                         </select>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Fecha y Hora</label>
-                        <input type="datetime-local" id="input-fecha" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" required>
+                    <div class="form-group">
+                        <label>Fecha y Hora</label>
+                        <input type="datetime-local" id="input-fecha" required>
                     </div>
 
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors shadow-sm mt-2">
-                        Confirmar Cita
-                    </button>
+                    <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
                 </form>
             </section>
         </div>
 
-        <section class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                📋 Listado de Citas Activas
-            </h2>
+        <section class="table-column card animate-fade-in">
+            <h2 class="card-title">📋 Listado de Citas Activas</h2>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+            <div class="table-responsive">
+                <table class="barber-table">
                     <thead>
-                        <tr class="border-b border-gray-200 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                            <th class="py-3 px-4">ID</th>
-                            <th class="py-3 px-4">Cliente</th>
-                            <th class="py-3 px-4">Barbero</th>
-                            <th class="py-3 px-4">Servicio</th>
-                            <th class="py-3 px-4">Fecha y Hora</th>
-                            <th class="py-3 px-4 text-center">Acciones</th>
+                        <tr>
+                            <th>Ref. ID</th>
+                            <th>Cliente</th>
+                            <th>Barbero</th>
+                            <th>Servicio</th>
+                            <th>Fecha / Hora</th>
+                            <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="tabla-citas-body" class="divide-y divide-gray-100 text-sm text-gray-700">
+                    <tbody id="tabla-citas-body">
                         <tr>
-                            <td colspan="6" class="py-8 text-center text-gray-400 italic">
-                                Cargando citas desde el servidor...
+                            <td colspan="6" class="table-loading">
+                                Sincronizando con MariaDB...
                             </td>
                         </tr>
                     </tbody>
@@ -116,3 +114,15 @@
     <script src="app.js"></script>
 </body>
 </html>
+
+<div id="custom-confirm-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <div class="modal-icon">⚠️</div>
+        <h3 class="modal-title-text">Confirmar Acción</h3>
+        <p id="custom-modal-message" class="modal-message-text">¿Estás seguro de que deseas realizar esta acción?</p>
+        <div class="modal-actions">
+            <button id="btn-modal-cancel" class="btn-modal btn-modal-dismiss">Volver</button>
+            <button id="btn-modal-confirm" class="btn-modal btn-modal-proceed">Confirmar</button>
+        </div>
+    </div>
+</div>
