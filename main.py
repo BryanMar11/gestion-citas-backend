@@ -1,9 +1,18 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, CORSMiddleware
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
 from database import engine, Base, get_db
 import models
 from datetime import datetime
+
+# Configuración de CORS para que tu frontend se pueda conectar sin bloqueos
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite peticiones desde cualquier origen (ideal para desarrollo)
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos los métodos: GET, POST, PUT, DELETE
+    allow_headers=["*"],
+)
 
 # Esquema para crear la cita (lo que envía el cliente)
 class CitaCreate(BaseModel):
